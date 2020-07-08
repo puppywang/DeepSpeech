@@ -9,6 +9,7 @@ import platform
 import os, sys
 import multiprocessing.pool
 import argparse
+import re
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument(
@@ -64,11 +65,18 @@ def compile_test(header, library):
 # hack compile to support parallel compiling
 distutils.ccompiler.CCompiler.compile = parallelCCompile
 
+max_order = "6"
+is_max_order = [s for s in sys.argv if "--max_order" in s]
+for element in is_max_order:
+    max_order = re.split('[= ]',element)[1]
+    sys.argv.remove(element)
+
 FILES = glob.glob('kenlm/util/*.cc') \
         + glob.glob('kenlm/lm/*.cc') \
-        + glob.glob('kenlm/util/double-conversion/*.cc')
+        + glob.glob('kenlm/util/double-conversion/*.cc') \
+        + glob.glob('kenlm/python/*.cc')
 
-FILES += glob.glob('openfst-1.6.3/src/lib/*.cc')
+FILES += glob.glob('openfst-win-1.6.3.1/src/lib/*.cc')
 
 FILES = [
     fn for fn in FILES
@@ -76,11 +84,20 @@ FILES = [
         'unittest.cc'))
 ]
 
-LIBS = ['stdc++']
-if platform.system() != 'Darwin':
-    LIBS.append('rt')
+if platform.system() == 'Linux':
+    LIBS = ['stdc++', 'rt']
+elif platform.system() == 'Darwin':
+    LIBS = ['c++']
+else:
+    LIBS = []
 
-ARGS = ['-O3', '-DNDEBUG', '-DKENLM_MAX_ORDER=6', '-std=c++11']
+#We don't need -std=c++11 but python seems to be compiled with it now.  https://github.com/kpu/kenlm/issues/86
+ARGS = ['-O3', '-DNDEBUG', '-DKENLM_MAX_ORDER='+max_order, '-std=c++11']
+
+#Attempted fix to https://github.com/kpu/kenlm/issues/186 and https://github.com/kpu/kenlm/issues/197
+if platform.system() == 'Darwin':
+    ARGS += ["-stdlib=libc++", "-mmacosx-version-min=10.7"]
+
 
 if compile_test('zlib.h', 'z'):
     ARGS.append('-DHAVE_ZLIB')
@@ -104,7 +121,7 @@ decoders_module = [
         include_dirs=[
             '.',
             'kenlm',
-            'openfst-1.6.3/src/include',
+            'openfst-win-1.6.3.1/src/include',
             'ThreadPool',
         ],
         libraries=LIBS,

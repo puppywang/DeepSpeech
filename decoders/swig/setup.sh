@@ -8,10 +8,12 @@ if [ ! -d kenlm ]; then
     echo -e "\n"
 fi
 
-if [ ! -d openfst-1.6.3 ]; then
+if [ ! -d openfst-win-1.6.3.1 ]; then
     echo "Download and extract openfst ..."
-    wget http://www.openfst.org/twiki/pub/FST/FstDownload/openfst-1.6.3.tar.gz
-    tar -xzvf openfst-1.6.3.tar.gz
+    # wget http://www.openfst.org/twiki/pub/FST/FstDownload/openfst-1.6.3.tar.gz
+    # tar -xzvf openfst-1.6.3.tar.gz
+    wget -O openfst-win-1.6.3.1.zip https://codeload.github.com/kkm000/openfst/zip/win/1.6.3.1
+    unzip openfst-win-1.6.3.1.zip
     echo -e "\n"
 fi
 

@@ -1,7 +1,7 @@
 #include "scorer.h"
 
-#include <unistd.h>
 #include <iostream>
+#include <io.h>
 
 #include "lm/config.hh"
 #include "lm/model.hh"
@@ -54,7 +54,7 @@ void Scorer::setup(const std::string& lm_path,
 
 void Scorer::load_lm(const std::string& lm_path) {
   const char* filename = lm_path.c_str();
-  VALID_CHECK_EQ(access(filename, F_OK), 0, "Invalid language model path");
+  VALID_CHECK_EQ(access(filename, 0), 0, "Invalid language model path");
 
   RetriveStrEnumerateVocab enumerate;
   lm::ngram::Config config;

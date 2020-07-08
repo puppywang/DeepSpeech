@@ -8,7 +8,7 @@ if [ ! -e data/tiny ]; then
 fi
 
 # download data, generate manifests
-PYTHONPATH=.:$PYTHONPATH python data/librispeech/librispeech.py \
+PYTHONPATH=. python data/librispeech/librispeech.py \
 --manifest_prefix='data/tiny/manifest' \
 --target_dir='./dataset/librispeech' \
 --full_download='False'

@@ -10,7 +10,10 @@ import logging
 import gzip
 import copy
 import inspect
-import cPickle as pickle
+try:
+   import _pickle as pickle
+except ImportError:
+   import cPickle as pickle
 import collections
 import multiprocessing
 import numpy as np
